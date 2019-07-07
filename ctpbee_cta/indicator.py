@@ -10,7 +10,7 @@ Notice : 神兽保佑 ，测试一次通过
 //      ┃　　　　　　 ┃
 //      ┗━┓　　　┏━━━┛
 //        ┃　　　┃   Author: somewheve
-//        ┃　　　┃   Datetime: 2019/7/7 上午11:08  ---> 无知即是罪恶
+//        ┃　　　┃   Datetime: 2019/7/7 下午12:21  ---> 无知即是罪恶
 //        ┃　　　┗━━━━━━━━━┓
 //        ┃　　　　　　　    ┣┓
 //        ┃　　　　         ┏┛
@@ -19,13 +19,5 @@ Notice : 神兽保佑 ，测试一次通过
 //          ┗━┻━┛   ┗━┻━┛
 //
 """
-# here are some easy strategy
 
-
-from functools import partial
-
-
-def printd(ko):
-    print(ko)
-
-d = partial(printd, )
+### 一些有趣的指标 欢迎提供

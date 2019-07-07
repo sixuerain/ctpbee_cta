@@ -26,12 +26,11 @@ from ctpbee.event_engine import Event
 from ctpbee.ctp.constant import EVENT_LOG
 
 
-def round_to(value: float, target: float):
+def round_to(value: float, target: float) -> float:
     """
     Round price to price tick value.
     """
-    rounded = int(round(value / target)) * target
-    return rounded
+    return int(round(value / target)) * target
 
 
 class Cta:
@@ -96,7 +95,6 @@ class Cta:
         """
         Send buy order to open a long position.
         """
-
         return self.send_order(Direction.LONG, Offset.OPEN, price, volume, stop, lock)
 
     def sell(self, price: float, volume: float, stop: bool = False, lock: bool = False):
@@ -127,6 +125,8 @@ class Cta:
             lock: bool
     ):
         """
+
+
         """
         contract = self.app.recorder.get_contract()
         if not contract:
@@ -136,7 +136,6 @@ class Cta:
         # Round order price and volume to nearest incremental value
         price = round_to(price, contract.pricetick)
         volume = round_to(volume, contract.min_volume)
-
         if stop:
             if contract.stop_supported:
                 return self.send_server_stop_order(strategy, contract, direction, offset, price, volume, lock)
