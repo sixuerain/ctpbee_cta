@@ -20,23 +20,24 @@ Notice : 神兽保佑 ，测试一次通过
 //
 """
 
-
 from ctpbee_cta.cta import Cta
 from ctpbee.data_handle.generator import DataGenerator
-from ctpbee.ctp.constant import (
-    StopOrder,
+from ctpbee.interface.ctp.constant import (
+
     TickData,
     BarData,
     TradeData,
     OrderData,
-    ArrayManager,
 )
+from ctpbee_cta.help import ArrayManager
+from ctpbee_cta.constant import StopOrder
 
 from ctpbee import ExtAbstract
 
 
 class DoubleMaStrategy(ExtAbstract):
-    author = "the author of vnpy"
+    author = "open_source"
+    name = "double ma"
 
     fast_window = 10
     slow_window = 20
@@ -50,39 +51,39 @@ class DoubleMaStrategy(ExtAbstract):
     parameters = ["fast_window", "slow_window"]
     variables = ["fast_ma0", "fast_ma1", "slow_ma0", "slow_ma1"]
 
-    def __init__(self, name, symbol, vt_symbol, app):
+    def __init__(self, name, app, cta_symbol):
         """"""
-        super().__init__(name, app)
-        self.cta = Cta(symbol, vt_symbol, self.app)
+
+        super().__init__(name=name, app=app)
+        self.cta_symbol = cta_symbol
+        self.cta_pointer = Cta(cta_name=self.name, app=self.app, symbol=self.cta_symbol)
         self.am = ArrayManager()
 
     def put_event(self):
         pass
 
-
-    def load_bar(self, number):
-        pass
-
-
     def on_init(self):
         """
         Callback when strategy is inited.
         """
-        self.cta.write_log("策略初始化")
+        self.cta_pointer.export_log("策略初始化")
         self.load_bar(10)
+
+    def load_bar(self):
+        """ accourding to your own data_"""
 
     def on_start(self):
         """
         Callback when strategy is started.
         """
-        self.cta.write_log("策略启动")
+        self.cta_pointer.export_log("策略启动")
         self.put_event()
 
     def on_stop(self):
         """
         Callback when strategy is stopped.
         """
-        self.cta.write_log("策略停止")
+        self.cta_pointer.export_log("策略停止")
         self.put_event()
 
     def on_tick(self, tick: TickData):
@@ -95,7 +96,7 @@ class DoubleMaStrategy(ExtAbstract):
         """
         Callback of new bar data update.
         """
-
+        # 初始化load
         am = self.am
         am.update_bar(bar)
         if not am.inited:
@@ -113,20 +114,23 @@ class DoubleMaStrategy(ExtAbstract):
         cross_below = self.fast_ma0 < self.slow_ma0 and self.fast_ma1 > self.slow_ma1
 
         if cross_over:
-            if self.cta.pos == 0:
-                self.cta.buy(bar.close_price, 1)
-            elif self.cta.pos < 0:
-                self.cta.cover(bar.close_price, 1)
-                self.cta.buy(bar.close_price, 1)
+            if self.cta_pointer.pos == 0:
+                self.cta_pointer.buy(bar.close_price, 1)
+            elif self.cta_pointer.pos < 0:
+                self.cta_pointer.cover(bar.close_price, 1)
+                self.cta_pointer.buy(bar.close_price, 1)
 
         elif cross_below:
-            if self.cta.pos == 0:
-                self.cta.short(bar.close_price, 1)
-            elif self.cta.pos > 0:
-                self.cta.sell(bar.close_price, 1)
-                self.cta.short(bar.close_price, 1)
+            if self.cta_pointer.pos == 0:
+                self.cta_pointer.short(bar.close_price, 1)
+            elif self.cta_pointer.pos > 0:
+                self.cta_pointer.sell(bar.close_price, 1)
+                self.cta_pointer.short(bar.close_price, 1)
 
         self.put_event()
+
+    def on_shared(self, shared):
+        pass
 
     def on_order(self, order: OrderData):
         """

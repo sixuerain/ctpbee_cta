@@ -21,11 +21,4 @@ Notice : 神兽保佑 ，测试一次通过
 """
 # here are some easy strategy
 
-
-from functools import partial
-
-
-def printd(ko):
-    print(ko)
-
-d = partial(printd, )
+from .double_ma import DoubleMaStrategy
